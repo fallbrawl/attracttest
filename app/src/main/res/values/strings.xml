@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">attracttest</string>
+    <string name="desc">Description:</string>
+    <string name="searchbarname">Search</string>
+</resources>
