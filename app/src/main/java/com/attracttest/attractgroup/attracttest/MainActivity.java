@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     ListView listView;
     SearchView searchView;
+    SuperheroAdapter statusesAdapter;
 
     //Request API URL
     final static String URL = "http://test.php-cd.attractgroup.com/test.json";
@@ -43,11 +44,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        if (TextUtils.isEmpty(newText)) {
-            listView.clearTextFilter();
-        } else {
-            listView.setFilterText(newText);
-        }
+//        if (TextUtils.isEmpty(newText)) {
+//            listView.clearTextFilter();
+//        } else {
+//            listView.setFilterText(newText);
+//        }
+        statusesAdapter.getFilter().filter(newText);
         return true;
     }
 
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             // {@link Profile}s. The adapter knows how to create list item views for each item
             // in the list.
             numberOfHeroes = contains.size();
-            SuperheroAdapter statusesAdapter = new SuperheroAdapter(context, contains);
+            statusesAdapter = new SuperheroAdapter(context, contains);
 
             // Get a reference to the ListView, and attach the adapter to the listView.
 
@@ -103,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return true;
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,7 +116,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         //Checkin for the network availability, or showin toast
         if (NetworkUtils.isNetworkAvailable(this)){
             new ParseJsonTask(this).execute(URL);
-            listView.setTextFilterEnabled(true);
+
+            listView.setTextFilterEnabled(false);
+
+
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
