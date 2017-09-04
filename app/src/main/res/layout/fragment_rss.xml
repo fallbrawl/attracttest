@@ -1,0 +1,26 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rssFragment"
+    android:orientation="vertical"
+    android:layout_margin="@dimen/activity_margin"
+    tools:context="com.attracttest.attractgroup.attracttest.RssFragment">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/news_title"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:textStyle="bold"
+
+        tools:text="MacBook Pro Thunderbolt 3 adapter guide: How to connect an iPhone, display, hard drive, and more" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/news_desc"
+        tools:text="MacBook Pro Thunderbolt 3 adapter guide: How to connect an iPhone, display, hard drive, and more MacBook Pro Thunderbolt 3 adapter guide: How to connect an iPhone, display, hard drive, and more"
+        android:ellipsize="end"/>
+
+</LinearLayout>

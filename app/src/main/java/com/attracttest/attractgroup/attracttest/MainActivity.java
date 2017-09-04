@@ -4,10 +4,19 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,6 +27,7 @@ import android.widget.Toast;
 
 import com.attracttest.attractgroup.attracttest.Utils.NetworkUtils;
 import com.attracttest.attractgroup.attracttest.Utils.UtilsJson;
+import com.attracttest.attractgroup.attracttest.Utils.XMLUtils;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -27,6 +37,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private ListView listView;
     private SearchView searchView;
     private SuperheroAdapter statusesAdapter;
+    private XMLUtils parseXML;
+    private DrawerLayout mDrawer;
+    private Toolbar toolbar;
+    private NavigationView nvDrawer;
+    private ActionBarDrawerToggle drawerToggle;
 
     //Request API URL
     final static String URL = "http://test.php-cd.attractgroup.com/test.json";
@@ -62,6 +77,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
             try {
                 superheroProfiles =  UtilsJson.fetchSuperheroProfileData(params[0]);
+                parseXML = new XMLUtils("https://www.macworld.com/index.rss");
+                parseXML.fetchXML();
+
+                while(parseXML.parsingComplete);
+                Log.e("staty", parseXML.getDescription());
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -101,13 +121,76 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // The action bar home/up action should open or close the drawer.
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawer.openDrawer(GravityCompat.START);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        return true;
+                    }
+                });
+    }
+
+    public void selectDrawerItem(MenuItem menuItem) {
+        // Create a new fragment and specify the fragment to show based on nav item clicked
+        Fragment fragment = null;
+        Class fragmentClass;
+
+        switch(menuItem.getItemId()) {
+            case R.id.rss1:
+                Intent profileFragmentIntent = new Intent(MainActivity.this, RssFragmentAdapter.class);
+                startActivity(profileFragmentIntent);
+                break;
+            default:
+                fragmentClass = MainActivity.class;
+        }
+
+
+        // Highlight the selected item has been done by NavigationView
+        menuItem.setChecked(true);
+        // Set action bar title
+        setTitle(menuItem.getTitle());
+        // Close the navigation drawer
+        mDrawer.closeDrawers();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final ActionBar actionBar = getSupportActionBar();
+
+        if(actionBar!=null)
+        {
+            actionBar.setHomeAsUpIndicator(R.mipmap.ic_launcher);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         listView = findViewById(R.id.list_for_superhero_profiles);
         searchView = findViewById(R.id.search);
+        // Set a Toolbar to replace the ActionBar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        // Find our drawer view
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        // Find our drawer view
+        nvDrawer = (NavigationView) findViewById(R.id.nvView);
+        // Setup drawer view
+        setupDrawerContent(nvDrawer);
 
         //Checkin for the network availability, or showin toast
         if (NetworkUtils.isNetworkAvailable(this)){
@@ -119,9 +202,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-
-                    // Get the {@link SuperheroProfile} object at the given position the user clicked on
-                    SuperheroProfile profile = superheroProfiles.get(position);
 
                     Intent profileFragmentIntent = new Intent(MainActivity.this, SuperheroFragmentAdapter.class);
                     profileFragmentIntent.putExtra("frag_position", position);
