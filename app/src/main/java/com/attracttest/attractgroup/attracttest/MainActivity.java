@@ -24,9 +24,9 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
-    ListView listView;
-    SearchView searchView;
-    SuperheroAdapter statusesAdapter;
+    private ListView listView;
+    private SearchView searchView;
+    private SuperheroAdapter statusesAdapter;
 
     //Request API URL
     final static String URL = "http://test.php-cd.attractgroup.com/test.json";
@@ -44,11 +44,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextChange(String newText) {
-//        if (TextUtils.isEmpty(newText)) {
-//            listView.clearTextFilter();
-//        } else {
-//            listView.setFilterText(newText);
-//        }
+
         statusesAdapter.getFilter().filter(newText);
         return true;
     }
@@ -110,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        listView = (ListView) findViewById(R.id.list_for_superhero_profiles);
+        listView = findViewById(R.id.list_for_superhero_profiles);
         searchView = findViewById(R.id.search);
 
         //Checkin for the network availability, or showin toast
@@ -134,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("profile", superheroProfiles);
                     bundle.putInt("size", numberOfHeroes);
-                    bundle.putInt("currentId", position);
+                    bundle.putInt("currentPosition", position);
 
                     profileFragmentIntent.putExtras(bundle);
                     startActivity(profileFragmentIntent);

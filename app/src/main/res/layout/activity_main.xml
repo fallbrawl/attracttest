@@ -24,6 +24,7 @@
                 android:id="@+id/list_for_superhero_profiles"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 />
         </LinearLayout>
 
@@ -36,7 +37,7 @@
             android:layout_alignParentRight="true"
             android:layout_gravity="end|bottom"
             android:scaleType="fitCenter"
-            android:layout_margin="@dimen/activity_margin"
+            android:layout_margin="@dimen/floating_button_margin"
             android:src="@drawable/ic_add_black"
             app:borderWidth="0dp"
             />

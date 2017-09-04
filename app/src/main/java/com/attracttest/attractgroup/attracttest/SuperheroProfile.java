@@ -35,9 +35,9 @@ public class SuperheroProfile implements Serializable {
         this.date = date;
     }
 
-    int id;
-    String name;
-    String description;
-    String image;
-    String date;
+    private int id;
+    private String name;
+    private String description;
+    private String image;
+    private String date;
 }

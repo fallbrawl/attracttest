@@ -3,6 +3,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="activity_margin">8dp</dimen>
-    <dimen name="superhero_img_list">50dp</dimen>
+    <dimen name="superhero_img_list">80dp</dimen>
     <dimen name="floating_button">56dp</dimen>
+    <dimen name="floating_button_margin">16dp</dimen>
+    <dimen name="hero_list_item">88dp</dimen>
 </resources>

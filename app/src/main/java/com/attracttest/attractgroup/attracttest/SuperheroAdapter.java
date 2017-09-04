@@ -74,7 +74,8 @@ public class SuperheroAdapter extends ArrayAdapter<SuperheroProfile> implements 
             }
             else {
 
-                result.thumbnailView.setImageBitmap(Bitmap.createScaledBitmap(result.bitmap,120 , 90, false));
+                //result.thumbnailView.setImageBitmap(Bitmap.createScaledBitmap(result.bitmap,120 , 90, false));
+                result.thumbnailView.setImageBitmap(result.bitmap);
             }
         }
     }

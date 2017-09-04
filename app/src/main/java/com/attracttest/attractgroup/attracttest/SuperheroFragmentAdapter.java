@@ -14,13 +14,14 @@ import java.util.ArrayList;
 
 
 public class SuperheroFragmentAdapter extends FragmentActivity {
-    static final String TAG = "myLogs";
-    static final int PAGE_COUNT = 8;
-    static int size;
-    static int id;
-    static ArrayList<SuperheroProfile> profiles;
-    ViewPager pager;
-    PagerAdapter pagerAdapter;
+
+    private static final String TAG = "myLogs";
+    private static final int PAGE_COUNT = 8;
+    private static int size;
+    private static int currPosition;
+    private static ArrayList<SuperheroProfile> profiles;
+    private ViewPager pager;
+    private PagerAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +34,12 @@ public class SuperheroFragmentAdapter extends FragmentActivity {
         Bundle bundle = heroInfo.getExtras();
         profiles = (ArrayList<SuperheroProfile>) bundle.getSerializable("profile");
         size = bundle.getInt("size");
-        id = bundle.getInt("currentId");
+        currPosition = bundle.getInt("currentPosition");
 
         pager = (ViewPager) findViewById(R.id.pager);
         pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
-        pager.setCurrentItem(id);
+        pager.setCurrentItem(currPosition);
 
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
@@ -67,7 +68,7 @@ public class SuperheroFragmentAdapter extends FragmentActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return SuperheroFragment.newInstance(position, profiles.get(position), id);
+            return SuperheroFragment.newInstance(position, profiles.get(position), currPosition);
         }
 
         @Override

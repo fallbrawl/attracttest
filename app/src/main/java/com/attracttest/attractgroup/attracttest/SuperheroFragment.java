@@ -26,7 +26,7 @@ public class SuperheroFragment extends Fragment {
         Bundle arguments = new Bundle();
         arguments.putSerializable("profiles", profile);
         arguments.putInt(ARGUMENT_PAGE_NUMBER, page);
-        arguments.putInt("id", id);
+        arguments.putInt("currPosition", id);
         superheroFragment.setArguments(arguments);
         return superheroFragment;
     }
