@@ -1,4 +1,4 @@
-package com.attracttest.attractgroup.attracttest;
+package com.attracttest.attractgroup.attracttest.Rss;
 
 import android.support.v4.app.FragmentActivity;
 

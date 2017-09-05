@@ -17,23 +17,14 @@ public class XMLUtils {
     private String description = "description";
     private String urlString = null;
     private XmlPullParserFactory xmlFactoryObject;
+
     private List<String> descArray;
+    private List<String> titleArray;
+
     public volatile boolean parsingComplete = true;
 
     public XMLUtils(String url) {
         this.urlString = url;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     public List<String> getDescArray() {return descArray;}
@@ -61,8 +52,7 @@ public class XMLUtils {
 
                         if (name.equals("title")) {
                             title = text;
-                        } else if (name.equals("link")) {
-                            link = text;
+                            titleArray.add(title);
                         } else if (name.equals("description")) {
                             description = text;
                             //Log.e("insidious", description);
