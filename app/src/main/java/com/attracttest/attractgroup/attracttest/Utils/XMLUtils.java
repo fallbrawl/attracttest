@@ -1,8 +1,12 @@
 package com.attracttest.attractgroup.attracttest.Utils;
 
+import android.util.Log;
+
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -13,6 +17,7 @@ public class XMLUtils {
     private String description = "description";
     private String urlString = null;
     private XmlPullParserFactory xmlFactoryObject;
+    private List<String> descArray;
     public volatile boolean parsingComplete = true;
 
     public XMLUtils(String url) {
@@ -31,7 +36,10 @@ public class XMLUtils {
         return description;
     }
 
+    public List<String> getDescArray() {return descArray;}
+
     public void parseXMLAndStoreIt(XmlPullParser myParser) {
+        descArray = new ArrayList<>();
         int event;
         String text = null;
 
@@ -57,6 +65,10 @@ public class XMLUtils {
                             link = text;
                         } else if (name.equals("description")) {
                             description = text;
+                            //Log.e("insidious", description);
+
+                            descArray.add(description);
+
                         } else {
                         }
 

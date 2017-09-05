@@ -3,6 +3,7 @@ package com.attracttest.attractgroup.attracttest;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 parseXML.fetchXML();
 
                 while(parseXML.parsingComplete);
-                Log.e("staty", parseXML.getDescription());
+                Log.e("insidious", parseXML.getDescArray().get(3));
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -124,12 +125,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // The action bar home/up action should open or close the drawer.
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                mDrawer.openDrawer(GravityCompat.START);
-                return true;
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -143,6 +141,29 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         return true;
                     }
                 });
+    }
+
+    private ActionBarDrawerToggle setupDrawerToggle() {
+        // NOTE: Make sure you pass in a valid toolbar reference.  ActionBarDrawToggle() does not require it
+        // and will not render the hamburger icon without it.
+        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open,  R.string.drawer_close);
+    }
+
+    // `onPostCreate` called when activity start-up is complete after `onStart()`
+
+    // There are 2 signatures and only `onPostCreate(Bundle state)` shows the hamburger icon.
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggles
+        drawerToggle.onConfigurationChanged(newConfig);
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
@@ -182,13 +203,21 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
         listView = findViewById(R.id.list_for_superhero_profiles);
         searchView = findViewById(R.id.search);
+
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         // Find our drawer view
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerToggle = setupDrawerToggle();
+
+        // Tie DrawerLayout events to the ActionBarToggle
+        mDrawer.addDrawerListener(drawerToggle);
+
         // Find our drawer view
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
+
         // Setup drawer view
         setupDrawerContent(nvDrawer);
 
