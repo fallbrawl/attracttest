@@ -12,6 +12,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -24,6 +26,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.attracttest.attractgroup.attracttest.Rss.RssFragmentAdapter;
+import com.attracttest.attractgroup.attracttest.Rss.RssItem;
 import com.attracttest.attractgroup.attracttest.Utils.NetworkUtils;
 import com.attracttest.attractgroup.attracttest.Utils.UtilsJson;
 import com.attracttest.attractgroup.attracttest.Utils.XMLUtils;
@@ -43,10 +46,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private ActionBarDrawerToggle drawerToggle;
 
     //Request API URL
-    final static String URL = "http://test.php-cd.attractgroup.com/test.json";
+    final static String heroURL = "http://test.php-cd.attractgroup.com/test.json";
 
-    //Array init for the Listview
+    //Request Rss feed
+    final static String rssURL = "https://www.macworld.com/index.rss";
+
+    //Array init for the List of superhero profiles
     private ArrayList<SuperheroProfile> superheroProfiles = new ArrayList<>();
+
+    //Array init for the List of RSS items
+    private ArrayList<RssItem> rssItems = new ArrayList<>();
 
     //Number of heroes for sendin into fragments adapter
     int numberOfHeroes;
@@ -66,7 +75,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     //Task for retrieving array of {@link SuperheroProfile}s
     private class ParseJsonTask extends AsyncTask<String, Void, ArrayList<SuperheroProfile>> {
         private Context context;
-        public ParseJsonTask(Context context){
+
+        public ParseJsonTask(Context context) {
             this.context = context;
         }
 
@@ -75,12 +85,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
             try {
-                superheroProfiles =  UtilsJson.fetchSuperheroProfileData(params[0]);
-                parseXML = new XMLUtils("https://www.macworld.com/index.rss");
-                parseXML.fetchXML();
+                superheroProfiles = UtilsJson.fetchSuperheroProfileData(params[0]);
 
-                while(parseXML.parsingComplete);
-                Log.e("insidious", parseXML.getDescArray().get(3));
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -99,7 +105,40 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             // Get a reference to the ListView, and attach the adapter to the listView.
 
             listView.setAdapter(statusesAdapter);
-        }}
+        }
+    }
+
+    //Task for retrieving array of {@link RssItem}s
+    private class ParseRss extends AsyncTask<String, Void, ArrayList<RssItem>> {
+        private Context context;
+
+        public ParseRss(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected ArrayList<RssItem> doInBackground(String... params) {
+
+            parseXML = new XMLUtils(params[0]);
+            parseXML.fetchXML();
+
+            while (parseXML.parsingComplete) ;
+
+            //return parseXML.getRssItems();
+            return rssItems;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<RssItem> contains) {
+            //Settin the Cardview with rss's
+            Log.e("staty", String.valueOf(contains.size()));
+//            statusesAdapter = new SuperheroAdapter(context, contains);
+//
+//            // Get a reference to the ListView, and attach the adapter to the listView.
+//
+//            listView.setAdapter(statusesAdapter);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -144,12 +183,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private ActionBarDrawerToggle setupDrawerToggle() {
         // NOTE: Make sure you pass in a valid toolbar reference.  ActionBarDrawToggle() does not require it
         // and will not render the hamburger icon without it.
-        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open,  R.string.drawer_close);
+        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close);
     }
 
     // `onPostCreate` called when activity start-up is complete after `onStart()`
 
-    // There are 2 signatures and only `onPostCreate(Bundle state)` shows the hamburger icon.
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -169,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         Fragment fragment = null;
         Class fragmentClass;
 
-        switch(menuItem.getItemId()) {
+        switch (menuItem.getItemId()) {
             case R.id.rss1:
                 Intent profileFragmentIntent = new Intent(MainActivity.this, RssFragmentAdapter.class);
                 startActivity(profileFragmentIntent);
@@ -194,8 +232,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         setContentView(R.layout.activity_main);
         final ActionBar actionBar = getSupportActionBar();
 
-        if(actionBar!=null)
-        {
+//        //View for rss
+//        RecyclerView rv = (RecyclerView)findViewById(R.id.rv);
+//        //Subclassin the layout manager
+//        LinearLayoutManager llm = new LinearLayoutManager(this);
+//        rv.setLayoutManager(llm);
+
+        if (actionBar != null) {
             actionBar.setHomeAsUpIndicator(R.mipmap.ic_launcher);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
@@ -220,11 +263,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         setupDrawerContent(nvDrawer);
 
         //Checkin for the network availability, or showin toast
-        if (NetworkUtils.isNetworkAvailable(this)){
-            new ParseJsonTask(this).execute(URL);
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            new ParseRss(this).execute(rssURL);
+            new ParseJsonTask(this).execute(heroURL);
 
             listView.setTextFilterEnabled(false);
-
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -244,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 }
             });
 
-        }
-        else Toast.makeText(this,"Enable network pls!", Toast.LENGTH_LONG).show();
+        } else {Toast.makeText(this, "Enable network pls!", Toast.LENGTH_LONG).show();
+            Log.e("NO INTERNETO:", "OH!");}
     }
 }
