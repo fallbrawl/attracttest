@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.attracttest.attractgroup.attracttest.R;
@@ -15,11 +14,11 @@ import java.util.List;
 /**
  * Created by nexus on 04.09.2017.
  */
-public class RssFragmentAdapter extends RecyclerView.Adapter<RssFragmentAdapter.RssViewHolder> {
+public class RssRecycleAdapter extends RecyclerView.Adapter<RssRecycleAdapter.RssViewHolder> {
 
     List<RssItem> news;
 
-    RssFragmentAdapter(List<RssItem> news){
+    public RssRecycleAdapter(List<RssItem> news){
         this.news = news;
     }
 

@@ -12,7 +12,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -25,13 +24,14 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.attracttest.attractgroup.attracttest.Rss.RssFragmentAdapter;
+import com.attracttest.attractgroup.attracttest.Rss.RssRecycleAdapter;
 import com.attracttest.attractgroup.attracttest.Rss.RssItem;
 import com.attracttest.attractgroup.attracttest.Utils.NetworkUtils;
 import com.attracttest.attractgroup.attracttest.Utils.UtilsJson;
 import com.attracttest.attractgroup.attracttest.Utils.XMLUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
@@ -109,12 +109,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     //Task for retrieving array of {@link RssItem}s
-    private class ParseRss extends AsyncTask<String, Void, ArrayList<RssItem>> {
-        private Context context;
-
-        public ParseRss(Context context) {
-            this.context = context;
-        }
+    private class ParseRss extends AsyncTask<String, Void, List<RssItem>> {
 
         @Override
         protected ArrayList<RssItem> doInBackground(String... params) {
@@ -122,21 +117,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             parseXML = new XMLUtils(params[0]);
             parseXML.fetchXML();
 
-            while (parseXML.parsingComplete) ;
+            while (parseXML.parsingComplete);
 
-            //return parseXML.getRssItems();
-            return rssItems;
+            return parseXML.getRssItems();
         }
 
         @Override
-        protected void onPostExecute(ArrayList<RssItem> contains) {
+        protected void onPostExecute(List<RssItem> contains) {
             //Settin the Cardview with rss's
+            RecyclerView rv = findViewById(R.id.rv);
             Log.e("staty", String.valueOf(contains.size()));
-//            statusesAdapter = new SuperheroAdapter(context, contains);
-//
-//            // Get a reference to the ListView, and attach the adapter to the listView.
-//
-//            listView.setAdapter(statusesAdapter);
+            RssRecycleAdapter adapter = new RssRecycleAdapter(contains);
+            rv.setAdapter(adapter);
         }
     }
 
@@ -209,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         switch (menuItem.getItemId()) {
             case R.id.rss1:
-                Intent profileFragmentIntent = new Intent(MainActivity.this, RssFragmentAdapter.class);
+                Intent profileFragmentIntent = new Intent(MainActivity.this, RssRecycleAdapter.class);
                 startActivity(profileFragmentIntent);
                 break;
             default:
@@ -264,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         //Checkin for the network availability, or showin toast
         if (NetworkUtils.isNetworkAvailable(this)) {
-            new ParseRss(this).execute(rssURL);
+            new ParseRss().execute(rssURL);
             new ParseJsonTask(this).execute(heroURL);
 
             listView.setTextFilterEnabled(false);

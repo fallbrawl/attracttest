@@ -17,12 +17,15 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 public class XMLUtils {
-    private String title = "title";
-    private String description = "description";
+
     private String urlString = null;
     private XmlPullParserFactory xmlFactoryObject;
     private RssItem rssItem;
-    private List<RssItem> rssItems;
+    private ArrayList<RssItem> rssItems;
+
+    private String title = "title";
+    private String description = "description";
+
     private  List<String> titles;
     private  List<String> descriptions;
 
@@ -32,7 +35,7 @@ public class XMLUtils {
         this.urlString = url;
     }
 
-    public List<RssItem> getRssItems() {return rssItems;}
+    public ArrayList<RssItem> getRssItems() {return rssItems;}
 
     public void parseXMLAndStoreIt(XmlPullParser myParser) {
         int event;
@@ -93,63 +96,6 @@ public class XMLUtils {
         }
 
     }
-
-
-//        int event;
-//        String text = null;
-//        rssItems = new ArrayList<>();
-//
-//        try {
-//            String name = null;
-//
-//            while ((event = myParser.getEventType()) != XmlPullParser.END_DOCUMENT) {
-//
-//                switch (event) {
-//                    case XmlPullParser.START_TAG:
-//                        name  = myParser.getName();
-//                        break;
-//
-//                    case XmlPullParser.TEXT:
-//                        text = myParser.getText();
-//                        break;
-//
-//                    case XmlPullParser.END_TAG:
-//
-//                        if (name.equals("title")) {
-//                            title = text;
-//                        }
-//
-//                        else if (name.equals("description")) {
-//                            description = text;
-//                        }else{
-//                        }
-//
-//                        break;
-//                }
-//
-//                myParser.next();
-//            }
-//
-//            parsingComplete = false;
-//        }
-//
-//        catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//                        //Thread.sleep(300);
-//                        rssItems.add(new RssItem(title, description));
-//                        Log.e("title", title);
-//                        Log.e("desc", description);
-//                        break;
- //               }
-
-                //Log.e("insidious", String.valueOf(myMap.size()));
-
- //           }
-
-
 
 
     public void fetchXML() {
