@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class SuperheroFragmentAdapter extends FragmentActivity {
 
     private static final String TAG = "myLogs";
-    private static final int PAGE_COUNT = 8;
+
     private static int size;
     private static int currPosition;
     private static ArrayList<SuperheroProfile> profiles;

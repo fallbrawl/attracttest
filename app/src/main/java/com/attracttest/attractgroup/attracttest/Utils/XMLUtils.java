@@ -23,6 +23,8 @@ public class XMLUtils {
     private XmlPullParserFactory xmlFactoryObject;
     private RssItem rssItem;
     private List<RssItem> rssItems;
+    private  List<String> titles;
+    private  List<String> descriptions;
 
     public volatile boolean parsingComplete = true;
 
@@ -33,20 +35,20 @@ public class XMLUtils {
     public List<RssItem> getRssItems() {return rssItems;}
 
     public void parseXMLAndStoreIt(XmlPullParser myParser) {
-
         int event;
-        String text = null;
+        String text=null;
         rssItems = new ArrayList<>();
+        titles = new ArrayList<>();
+        descriptions = new ArrayList<>();
 
         try {
+            String name = null;
+            while ((event = myParser.getEventType()) != XmlPullParser.END_DOCUMENT) {
 
-            event = myParser.getEventType();
 
-            while (event != XmlPullParser.END_DOCUMENT) {
-                String name = myParser.getName();
-
-                switch (event) {
+                switch (event){
                     case XmlPullParser.START_TAG:
+                        name = myParser.getName();
                         break;
 
                     case XmlPullParser.TEXT:
@@ -55,33 +57,100 @@ public class XMLUtils {
 
                     case XmlPullParser.END_TAG:
 
-                        if (name.equals("title")) {
+                        if(name.equals("title")){
                             title = text;
+                            titles.add(title);
+
                         }
 
-                        else if (name.equals("description")) {
+                        else if(name.equals("description")){
                             description = text;
+                            descriptions.add(description);
+
                         }
 
-                        //Thread.sleep(300);
-                        rssItems.add(new RssItem(title, description));
+                        else{
+
+                        }
 
                         break;
                 }
-                Log.e("title", title);
-                Log.e("desc", description);
 
-                //Log.e("insidious", String.valueOf(myMap.size()));
-                event = myParser.next();
+                myParser.next();
             }
 
             parsingComplete = false;
-        } catch (Exception e) {
+        }
+
+        catch (Exception e) {
             e.printStackTrace();
         }
-        Log.e("insidious", String.valueOf(rssItems.size()));
+
+        //Convert String arrays into rss
+        for (int i = 0; i < titles.size(); i++){
+            rssItem = new RssItem(titles.get(i), descriptions.get(i));
+            rssItems.add(rssItem);
+        }
 
     }
+
+
+//        int event;
+//        String text = null;
+//        rssItems = new ArrayList<>();
+//
+//        try {
+//            String name = null;
+//
+//            while ((event = myParser.getEventType()) != XmlPullParser.END_DOCUMENT) {
+//
+//                switch (event) {
+//                    case XmlPullParser.START_TAG:
+//                        name  = myParser.getName();
+//                        break;
+//
+//                    case XmlPullParser.TEXT:
+//                        text = myParser.getText();
+//                        break;
+//
+//                    case XmlPullParser.END_TAG:
+//
+//                        if (name.equals("title")) {
+//                            title = text;
+//                        }
+//
+//                        else if (name.equals("description")) {
+//                            description = text;
+//                        }else{
+//                        }
+//
+//                        break;
+//                }
+//
+//                myParser.next();
+//            }
+//
+//            parsingComplete = false;
+//        }
+//
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//                        //Thread.sleep(300);
+//                        rssItems.add(new RssItem(title, description));
+//                        Log.e("title", title);
+//                        Log.e("desc", description);
+//                        break;
+ //               }
+
+                //Log.e("insidious", String.valueOf(myMap.size()));
+
+ //           }
+
+
+
 
     public void fetchXML() {
         Thread thread = new Thread(new Runnable() {
