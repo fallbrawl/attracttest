@@ -39,13 +39,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".Rss.RssRecycleAdapter"
+        <activity android:name=".Rss.CardViewActivity"
             android:parentActivityName=".MainActivity" >
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
+        </activity>
+
+        <activity android:name=".Rss.RecycleViewActivity">
+
         </activity>
     </application>
 </manifest>

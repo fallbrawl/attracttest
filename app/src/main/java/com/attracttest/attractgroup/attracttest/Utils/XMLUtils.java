@@ -38,6 +38,7 @@ public class XMLUtils {
     public ArrayList<RssItem> getRssItems() {return rssItems;}
 
     public void parseXMLAndStoreIt(XmlPullParser myParser) {
+
         int event;
         String text=null;
         rssItems = new ArrayList<>();

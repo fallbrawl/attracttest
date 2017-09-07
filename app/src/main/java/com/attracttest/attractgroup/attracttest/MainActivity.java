@@ -6,13 +6,11 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -24,14 +22,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.attracttest.attractgroup.attracttest.Rss.RssRecycleAdapter;
-import com.attracttest.attractgroup.attracttest.Rss.RssItem;
+import com.attracttest.attractgroup.attracttest.Rss.CardViewActivity;
+import com.attracttest.attractgroup.attracttest.Rss.RecycleViewActivity;
 import com.attracttest.attractgroup.attracttest.Utils.NetworkUtils;
 import com.attracttest.attractgroup.attracttest.Utils.UtilsJson;
-import com.attracttest.attractgroup.attracttest.Utils.XMLUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
@@ -39,8 +35,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private ListView listView;
     private SearchView searchView;
     private SuperheroAdapter statusesAdapter;
-    private XMLUtils parseXML;
-    private DrawerLayout mDrawer;
+    protected DrawerLayout mDrawer;
     private Toolbar toolbar;
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
@@ -48,14 +43,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     //Request API URL
     final static String heroURL = "http://test.php-cd.attractgroup.com/test.json";
 
-    //Request Rss feed
-    final static String rssURL = "https://www.macworld.com/index.rss";
-
     //Array init for the List of superhero profiles
     private ArrayList<SuperheroProfile> superheroProfiles = new ArrayList<>();
-
-    //Array init for the List of RSS items
-    private ArrayList<RssItem> rssItems = new ArrayList<>();
 
     //Number of heroes for sendin into fragments adapter
     int numberOfHeroes;
@@ -105,30 +94,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             // Get a reference to the ListView, and attach the adapter to the listView.
 
             listView.setAdapter(statusesAdapter);
-        }
-    }
-
-    //Task for retrieving array of {@link RssItem}s
-    private class ParseRss extends AsyncTask<String, Void, List<RssItem>> {
-
-        @Override
-        protected ArrayList<RssItem> doInBackground(String... params) {
-
-            parseXML = new XMLUtils(params[0]);
-            parseXML.fetchXML();
-
-            while (parseXML.parsingComplete);
-
-            return parseXML.getRssItems();
-        }
-
-        @Override
-        protected void onPostExecute(List<RssItem> contains) {
-            //Settin the Cardview with rss's
-            RecyclerView rv = findViewById(R.id.rv);
-            Log.e("staty", String.valueOf(contains.size()));
-            RssRecycleAdapter adapter = new RssRecycleAdapter(contains);
-            rv.setAdapter(adapter);
         }
     }
 
@@ -196,13 +161,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
-        Fragment fragment = null;
+
         Class fragmentClass;
 
         switch (menuItem.getItemId()) {
             case R.id.rss1:
-                Intent profileFragmentIntent = new Intent(MainActivity.this, RssRecycleAdapter.class);
-                startActivity(profileFragmentIntent);
+                Intent rssChannel1Activity = new Intent(MainActivity.this, RecycleViewActivity.class);
+                startActivity(rssChannel1Activity);
                 break;
             default:
                 fragmentClass = MainActivity.class;
@@ -224,12 +189,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         setContentView(R.layout.activity_main);
         final ActionBar actionBar = getSupportActionBar();
 
-//        //View for rss
-//        RecyclerView rv = (RecyclerView)findViewById(R.id.rv);
-//        //Subclassin the layout manager
-//        LinearLayoutManager llm = new LinearLayoutManager(this);
-//        rv.setLayoutManager(llm);
-
         if (actionBar != null) {
             actionBar.setHomeAsUpIndicator(R.mipmap.ic_launcher);
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -238,25 +197,25 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         searchView = findViewById(R.id.search);
 
         // Set a Toolbar to replace the ActionBar.
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Find our drawer view
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawer = findViewById(R.id.drawer_layout);
         drawerToggle = setupDrawerToggle();
 
         // Tie DrawerLayout events to the ActionBarToggle
         mDrawer.addDrawerListener(drawerToggle);
 
         // Find our drawer view
-        nvDrawer = (NavigationView) findViewById(R.id.nvView);
+        nvDrawer = findViewById(R.id.nvView);
 
         // Setup drawer view
         setupDrawerContent(nvDrawer);
 
         //Checkin for the network availability, or showin toast
         if (NetworkUtils.isNetworkAvailable(this)) {
-            new ParseRss().execute(rssURL);
+
             new ParseJsonTask(this).execute(heroURL);
 
             listView.setTextFilterEnabled(false);
